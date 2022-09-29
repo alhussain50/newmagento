@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Harriswebworks
+ * @package Harriswebworks\Core
+ * @author Enamul Haque <emirajbbd@gmail.com / devteam@Harriswebworks.com >
+ * @copyright Copyright (c) 2018 Harriswebworks, Ltd (http://www.Harriswebworks.com)
+ * @license http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Harriswebworks_Core::all" title="Harris Web Works" module="Harriswebworks_Core" sortOrder="60" resource="Harriswebworks_Core::all" />
+    </menu>
+</config>

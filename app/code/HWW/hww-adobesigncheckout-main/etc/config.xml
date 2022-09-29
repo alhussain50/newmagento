@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <hww_adobesigncheckout>
+            <adobesignconf>
+                <enable>1</enable>
+            </adobesignconf>
+            <apiconf>
+                <apiBaseURL>https://api.na3.adobesign.com/</apiBaseURL>
+                <userEmail>adobesign1999@gmail.com</userEmail>
+                <authKey>3AAABLblqZhByeyKN73VAQYcQjrZoZAp-wPZoZq7h2F-ItpOKQ4KYi-qTP_nHTKhf-Q7hSHd3fX6Nkag3N0uW0IdGzcdonTq-</authKey>
+            </apiconf>
+            
+        </hww_adobesigncheckout>
+    </default>
+</config>

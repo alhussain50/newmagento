@@ -1,0 +1,328 @@
+<?php
+
+namespace Harriswebworks\Pdfmaker\Controller\Index;
+
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Magento\Backend\App\Action\Context;
+use Magento\Ui\Component\MassAction\Filter;
+use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
+use Mpdf\QrCode\QrCode;
+use Mpdf\QrCode\Output;
+use Picqer\Barcode;
+use Harriswebworks\Pdfmaker\Helper\Data;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Harriswebworks\WarehouseQty\Model\WarehouseQtyFactory;
+
+class Index extends \Magento\Sales\Controller\Adminhtml\Order\AbstractMassAction {
+
+    protected $_customerSession;
+    protected $collectionFactory;
+    protected $pcollectionFactory;
+    protected $_customerFactory;
+    protected $_hwwThemeHelper;
+    protected $tierPrice;
+
+    public function __construct(
+            Context $context,
+            \Magento\Customer\Model\Session $customerSession,
+//            storeManager $storeManager,
+            \Magento\Framework\App\ResourceConnection $resource,
+            \Magento\SharedCatalog\Model\ResourceModel\ProductItem\CollectionFactory $collectionFactory,
+            \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $pcollectionFactory,
+            \Harriswebworks\Theme\Helper\Data $dataHelper,
+            ScopedProductTierPriceManagementInterface $tierPrice,
+            \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerFactory
+    ) {
+        parent::__construct($context);
+//        $this->_storeManager = $storeManager;
+        $this->_customerSession = $customerSession;
+        $this->_resource = $resource;
+        $this->_collectionFactory = $collectionFactory;
+        $this->_pcollectionFactory = $pcollectionFactory;
+        $this->_customerFactory = $customerFactory;
+        $this->_hwwThemeHelper = $dataHelper;
+        $this->tierPrice = $tierPrice;
+//        $this->scopeConfig = $scopeConfig;
+    }
+
+    public function getCustomerId() {
+        return $this->_customerSession->getCustomer()->getId(); //Print current customer ID
+    }
+
+    public function getCustomerGroupId() {
+        return $this->_customerSession->getCustomer()->getGroupId(); //Print current customer group ID
+    }
+
+    public function getCustomerName() {
+        return $this->_customerSession->getCustomer()->getFirstname(); //Print current customer name
+    }
+
+    public function getCustomerEmail() {
+        return $this->_customerSession->getCustomer()->getEmail(); //Print current customer name
+    }
+
+//    public function getStore() {
+//        return $this->_storeManager->getStore();
+//    }
+
+    public function getMediaUrl() {
+        return $this->_urlBuilder->getBaseUrl(['_type' => UrlInterface::URL_TYPE_MEDIA]);
+    }
+
+    public function execute() {
+       $Cname=$this->getCustomerName();
+      $this->massAction($id,$store, $Cname);
+
+    }
+
+//      public function getResizedImage($image, $width = null, $height = null, $path = '') {
+//          
+//        $image = trim($image, '/');
+//        $absolutePath = $this->getMediaDirectory()->getAbsolutePath($path . '/') . $image;
+//        $imageResized = $this->getMediaDirectory()->getAbsolutePath($path . '/resized/' . $width . '/') . $image;
+//        if (!file_exists($imageResized) && file_exists($absolutePath)) {
+//            //create image factory...
+//            $imageResize = $this->_imageFactory->create();
+//            $imageResize->open($absolutePath);
+//            $imageResize->constrainOnly(TRUE);
+//            $imageResize->keepTransparency(TRUE);
+//            $imageResize->keepFrame(FALSE);
+//            $imageResize->keepAspectRatio(TRUE);
+//            $imageResize->resize($width, $height);
+//            //destination folder                
+//            $destination = $imageResized;
+//            //save image      
+//            $imageResize->save($destination);
+//        }
+//        $resizedURL = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . $path . '/resized/' . $width . '/' . $image;
+//
+//        $src = 'src="' . $resizedURL . '"';
+//        $html = '<img ' . $src . '  width="' . $width . '" height="' . $height . '" ' . $attr . '/>';
+//        return $html;
+//    }
+
+    public function pdfGenerate($id,$store, $Cname) {
+
+//         $customercollection = $this->_customerFactory->create();
+//            $customercollection = $customercollection
+//                    ->addAttributeToSelect("*")
+//                    ->load();
+//            $allcustomerdata = $customercollection->getData();
+////       var_dump($customercollection->getData());
+////       exit;
+//            foreach ($allcustomerdata as $customer) {
+//                var_dump($customer['group_id']);exit;
+        $sharedproducts = $this->_collectionFactory->create();
+        $sharedproducts->addFieldToFilter('customer_group_id', $id);
+        $snsku = $sharedproducts->getColumnValues('sku');
+        asort($snsku);
+        $snsku = array_values($snsku);
+        // $collection = $this->objectManager->get('\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory');
+        $products = $this->_pcollectionFactory->create();
+        $products->addAttributeToSelect('*')->addAttributeToFilter('sku', array('in' => $snsku));
+        $products->addAttributeToFilter(
+                'status', array('eq' => \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
+        );
+        // $nsku = $products->getColumnValues('sku');
+        // asort($nsku);
+        // $nsku = array_values($nsku);
+
+
+        $allproducts = array();
+        //        $pid = array();
+        foreach ($products as $p) {
+            //            var_dump($p->getData());exit;
+            //            $sku=$p->getSku();
+            //            var_dump($sku);
+            //            $pid[$p['sku']]['sku'] = $p->getId();
+            //            $pid[$p['sku']]['name'] = $p->getName();
+            //            $pid[$p['sku']]['short_description'] = $p->getShortDescription();
+            //            $pid[$p['sku']]['thumbnail'] = $p->getThumbnail();
+            //            $pid[$p['sku']]['price'] = $p->getFinalPrice();
+            //            $stockqty[$stockitem['item_id']][$count1]['qty']
+            //            $pid['name'] = $p->getName();
+//                         var_dump(empty($this->tierPrice->getList($p->getSku(), $id)));exit;
+            if (!empty($this->tierPrice->getList($p->getSku(), $id))) {
+                $tier_price = $this->tierPrice->getList($p->getSku(), $id);
+            } else {
+                $tier_price = 0;
+            }
+            $allproducts[] = array(
+                'customer_id' => $this->getCustomerId(),
+                'product_sku' => $p->getSku(),
+                'name' => $p->getName(),
+                'short_description' => $p->getShortDescription(),
+                'description' => $p->getDescription(),
+                'thumbnail' => $p->getThumbnail(),
+                'price' => $p->getFinalPrice(),
+                'tier_price' => $tier_price,
+            );
+        }
+//        var_dump($allproducts);exit;
+        $storeLogo = '';
+        $count = 0;
+
+        $product = '';
+        $product_second = '';
+//        echo count($orderItems);
+        $partial = array();
+//        $_hwwhelper    = $this->helper('Harriswebworks\Theme\Helper\Data');
+        $mediaUrl = $this->_hwwThemeHelper->mediaFileUrl('');
+        $_imgUrl = $mediaUrl . 'catalog/product/placeholder/image.jpg';
+        foreach ($allproducts as $item) {
+//            var_dump($item);exit;
+            $prd = $item['product_sku'];
+            if ($item) {
+//                $optionhtml = $this->getOptionHtml($item);
+//                '<img src="%s"/>', $this->getViewFileUrl('Magento_Catalog::images/product/placeholder/thumbnail.jpg'));
+//                $thumb = $item['thumbnail']!=='no_selection'?'<a href="' . $this->getMediaUrl() . 'catalog/product/' . $item['thumbnail'] . '">'.$item['thumbnail'].'</a>':$item['thumbnail'];
+
+                if ($item['thumbnail'] !== 'no_selection') {
+                    $thumb = $this->_hwwThemeHelper->getResizedImagePdf($item['thumbnail'], 330, 330, 'catalog/product');
+//                    var_dump($thumb);
+                } else {
+                    $thumb = '<img src="' . $_imgUrl . '" width="330" height="330">';
+                }
+//                $product_second .= '<tr>' . '<td>' . preg_replace('/[^A-Za-z0-9\-]/', ' ', $item['name']) . '</td>' . '<td>' . $item['product_sku'] . '</td>' . '<td>' . $item['price'] . '</td>' . '<td>' . preg_replace('/[^A-Za-z0-9\-]/', ' ', $item['short_description']) . '</td>' . '<td>'.$thumb.'</td></tr>';
+                $product_second .= '<tr>' . '<td style="border:1px solid #ddd; width:30%; max-height: 420px;">' . $thumb . '</td>' . '<td style="border:1px solid #ddd; width:70%"><p style="font-size:18px;font-weight:bold">' . preg_replace('/[^A-Za-z0-9\-]/', ' ', $item['name']) . '</p><br><p style="font-size:16px;font-weight:bold">' . $item['product_sku'] . '</p><br><p style="font-size:16px;">' . preg_replace('/[^A-Za-z0-9\-]/', ' ', $item['description']) . '</p><br><p style="font-size:16px;font-weight:bold">' . $item['price'] . '</p><br><p style="font-size:16x;font-weight:bold">' . $item['tier_price'] . '</p><br><p style="font-size:16px;font-weight:bold;color:blue">' . preg_replace('/[^A-Za-z0-9\-]/', ' ', $item['short_description']) . '</p></td></tr>';
+            }
+//            $countx++;
+        }
+//        var_dump($product_second);
+//        exit;
+//       echo 'test'; exit;
+//        $generator = new \Picqer\Barcode\BarcodeGeneratorHTML();
+//        $barcode = $generator->getBarcode('FMT-00219', $generator::TYPE_CODE_128);
+        $html = '
+<html>
+<head>
+<style>
+body {font-family: sans-serif;font-size: 9pt;}
+h5, p {	margin: 0pt;}
+table.items {font-size: 9pt;border-collapse: collapse;border:0;}
+td { vertical-align: top;border:0;}
+table thead td {text-align: left;border:0;border-top: 3px solid #000000;border-bottom: 3px solid #000000;}
+table tfoot td {text-align: left;}
+.barcode {margin: 0;vertical-align: top;color: #000000;}
+.barcodecell {vertical-align: middle;padding:0;}
+.logoimg{max-height:100px; width:auto}
+</style>
+</head>
+<body>
+<table class="header" width="100%" cellpadding="0" border="0">
+<tr>
+<td style="border-left:1px solid #000000; padding-left:15px; padding-top:20px">Fulfilled by Contractor Nation<br />
+500 Cornwall Avenue<br />
+Cheshire, CT 06410<br />
+203.699.9805<br />
+thecnstore.com
+</td>
+</tr>
+</table>
+<h2 style="border-top:3px solid #000000; border-bottom:1px solid #000000;padding:5px 0;margin:2 ">
+<span style="display:inline-block;margin-right:30px">CustomerName: #' . $Cname . '</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span >Store: ' . $store . '</span>
+</h2>
+<table class="items" width="100%" cellpadding="8" border="1" autosize="0" style="overflow: wrap">
+<thead>
+<tr>
+<td style="font-size:16px;font-weight:bold" >Product Image</td>
+<td style="font-size:16px;font-weight:bold">Product Info</td>
+</tr>
+</thead>
+<tbody>
+' . $product_second . '
+</tbody>
+</table>
+</body>
+</html>
+';
+
+        $body = array(
+            "html" => $html,
+//            "header" => $header
+        );
+
+        return $body;
+    }
+
+    public function massAction($id,$store,$Cname) {
+
+//        $customercollection = $this->_customerFactory->create();
+//        $customercollection = $customercollection
+//                ->addAttributeToSelect("*")
+//                ->load();
+//        $allcustomerdata = $customercollection->getData();
+//       var_dump($customercollection->getData());
+//       exit;
+        $data = array();
+//        foreach ($allcustomerdata as $customer) {
+//            var_dump($customer);exit;
+
+        $data[] = $this->pdfGenerate($id,$store, $Cname);
+//        }
+//        $data = array();
+//        foreach ($pdata as $p) {
+//            $id=$customer['group_id'];
+//            $data[] = $this->pdfGenerate($id);
+//        }
+//        $data = array();
+//        foreach ($orderIds as $id) {
+//            $data[] = $this->pdfGenerate($id);
+//        }
+//
+//        $numberOfItem = $this->numberOfItem;
+//        if ($numberOfItem === false)
+//            $numberOfItem = $this->dataHelper->getConfig('hww_pdfmaker/ItemsDisplayattheFirstPage/NoofItemsDisplayattheFirstPage', $this->getStoreId());
+
+        $numberOfItem = 10;
+
+        $count = count($data);
+        $i = 1;
+        $mpdf = new \Mpdf\Mpdf([
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 0,
+            'margin_bottom' => 15,
+            'margin_header' => 0,
+            'margin_footer' => 26,
+            'showBarcodeNumbers' => FALSE
+        ]);
+
+        foreach ($data as $item) {
+//            var_dump(count($item));exit;
+            $mpdf->WriteHTML($item['html']);
+////            if ($item['count'] > $numberOfItem) {
+//            $mpdf->AddPage('', // L - landscape, P - portrait 
+//                    '', '', '', '',
+//                    15, // margin_left
+//                    15, // margin right
+//                    36, // margin top
+//                    15, // margin bottom
+//                    0, // margin header
+//                    26);
+//                $mpdf->AddPage();
+////                $mpdf->SetHTMLHeader($item['header']);
+//                $mpdf->SetHtmlFooter(' ');
+////                $mpdf->WriteHTML($item['html2']);
+            $mpdf->SetHTMLHeader(' ');
+////            }
+//            if ($i != $count) {
+//                $mpdf->AddPage('', // L - landscape, P - portrait 
+//                        '', '', '', '',
+//                        15, // margin_left
+//                        15, // margin right
+//                        0, // margin top
+//                        15, // margin bottom
+//                        0, // margin header
+//                        26);
+//                $mpdf->SetHTMLHeader(' ');
+//            }
+//            $i = $i + 1;
+        }
+        $filename = $Cname . '.pdf';
+        return $mpdf->Output('pub/media/adobesignagreement/' . $filename, 'F');
+    }
+
+
+}

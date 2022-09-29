@@ -1,0 +1,60 @@
+<!--Use 'stepCode' as id attribute-->
+<li data-bind="fadeVisible: isVisible, attr: { id: stepCode }">
+    <div class="step-title" data-bind="i18n: stepTitle" data-role="title"></div>
+    <div id="checkout-step-title" class="step-content" data-role="content">
+        <p>In order to Proceed,you must view and sign the agreement link below</p>
+        <!-- <button id="myBtn" class="myBtn">View and Sign</button> -->
+        <!-- The Modal -->
+        <!-- <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <iframe src='' height=900 width=1200></iframe>
+        </div> -->
+        <!-- <div>
+            <a href="#" class="click-me" id="click-me">view and sign</a>
+        </div>
+        
+        <div id="popup-modal" style="display:none;">
+            <iframe src='' height=900 width=1200></iframe>
+        </div> -->
+        <button type="button" id="click-me" class="action" data-trigger="trigger">
+            <span data-bind="i18n: 'View and Sign'"></span>
+        </button>
+        <div data-bind="mageInit: {
+                'Magento_Ui/js/modal/modal':{
+                    'type': 'popup',
+                    'trigger': '[data-trigger=trigger]',
+                    'responsive': true,
+                }}">
+            <div class="content">
+                <iframe class="sign-iframe" src='' height=900 width=1200></iframe>
+            </div>
+        </div>
+        
+
+            <!-- <iframe src="https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCs8hGY4yqj24mcYs_Tt9AX2pqaqt4a7rR9-ha0VHcfpRtYuQN8VzTDwkBsXlr2WtE*&hosted=false" width="100%" height="100%" frameborder="0" style="border: 0; overflow: hidden; min-height: 500px; min-width: 600px;"></iframe> -->
+            <!-- <a href="https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCs8hGY4yqj24mcYs_Tt9AX2pqaqt4a7rR9-ha0VHcfpRtYuQN8VzTDwkBsXlr2WtE*">View and Sign</a> -->
+            <!-- <p>The customer is <span data-bind="if: !isLogedIn">not</span> Logged-in</p> -->
+            <form data-bind="submit: navigateToNextStep" novalidate="novalidate">
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button data-role="opc-continue" type="submit" class="button action continue primary">
+                            <span>
+                                <!-- ko i18n: 'Next'-->
+                                <!-- /ko -->
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+</li>
+
+<style>
+
+.checkout-index-index .modal-popup .modal-inner-wrap {
+  margin-left: -400px;
+  width: 1280px;
+  left: 35%;
+}
+</style>

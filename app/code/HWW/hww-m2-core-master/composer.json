@@ -1,0 +1,25 @@
+{
+    "name": "harriswebworks/module-core",
+    "description": "Harriswebworks Core module for Magento 2 extensions.",
+    "type": "magento2-module",
+    "version": "0.1.0",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+	"authors": [{
+            "name": "Enamul Haque",
+            "email": "emirajbbd@gmail.com",
+			"company": "Harris Web Works"
+        }
+    ],
+	"homepage": "https://www.harriswebworks.com",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Harriswebworks\\Core\\": ""
+        }
+    }
+}

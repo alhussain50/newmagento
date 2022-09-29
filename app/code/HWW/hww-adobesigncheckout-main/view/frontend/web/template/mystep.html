@@ -1,0 +1,44 @@
+<!--Use 'stepCode' as id attribute-->
+<li data-bind="fadeVisible: isVisible, attr: { id: stepCode }">
+    <div class="step-title" data-bind="i18n: stepTitle" data-role="title"></div>
+    <div id="checkout-step-title" class="step-content" data-role="content">
+        <p class="view-sign-text">In order to Proceed, you must view and sign the agreement link below.</p>
+        <p class="thankutext" style="display:none;">Thanks for being patient and understanding. To complete order please click 'Next'.</p>
+        <button type="button" id="click-me" class="action" data-trigger="trigger">
+            <span data-bind="i18n: 'View and Sign'"></span>
+        </button>
+        <div data-bind="mageInit: {
+                'Magento_Ui/js/modal/modal':{
+                    'type': 'popup',
+                    'trigger': '[data-trigger=trigger]',
+                    'responsive': true,
+                    'clickableOverlay': false,
+                    'buttons': []
+                }}">
+            <div class="content">
+                <iframe class="sign-iframe" src='' height=900 width=1200></iframe>
+            </div>
+        </div>
+        <form data-bind="submit: navigateToNextStep" novalidate="novalidate">
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button data-role="opc-continue" type="submit" style="display:none;"
+                        class="signnext button action continue primary">
+                        <span>
+                            <!-- ko i18n: 'Next'-->
+                            <!-- /ko -->
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</li>
+
+<style>
+    .checkout-index-index .modal-popup .modal-inner-wrap {
+        margin-left: -400px;
+        width: 1280px;
+        left: 35%;
+    }
+</style>

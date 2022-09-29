@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Harriswebworks_AdobeSignCheckout::navigation" title="Adobe Sign Checkout" module="Harriswebworks_AdobeSignCheckout" sortOrder="10" parent="Harriswebworks_Core::all" resource="Harriswebworks_AdobeSignCheckout::navigation"/>
+        <add    id="Harriswebworks_AdobeSignCheckout::api_config" 
+                title="API configuration" 
+                module="Harriswebworks_AdobeSignCheckout" 
+                sortOrder="10" 
+                parent="Harriswebworks_AdobeSignCheckout::navigation" 
+                action="adminhtml/system_config/edit/section/hww_adobesigncheckout" 
+                dependsOnModule="Harriswebworks_Core" 
+                resource="Harriswebworks_AdobeSignCheckout::navigation_menu"/>
+    </menu>
+</config>

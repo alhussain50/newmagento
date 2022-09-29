@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+  <system>
+
+    <section id="hww_adobesigncheckout" translate="label" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+      <label>Adobe Sign Agreement</label>
+      <tab>harriswebworks</tab>
+      <resource>Harriswebworks_AdobeSignCheckout::settings</resource>
+      <group id="adobesignconf" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>General Configuration</label>
+        <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+          <label>Module Enable</label>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+
+      </group>
+      <group id="apiconf" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>API Configuration</label>
+        <field id="apiBaseURL" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+          <label>Enter API base URL</label>
+          <comment>Please enter the base URL of your Adobe API config</comment>
+        </field>
+        <field id="useremail" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+          <label>Enter account email address</label>
+          <comment>Please enter the email address of adobe account</comment>
+        </field>
+        <field id="authKey" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+          <label>Enter API authorization key</label>
+          <comment>Please enter the API authorization key of your Adobe API config</comment>
+        </field>
+
+      </group>
+    </section>
+  </system>
+</config>

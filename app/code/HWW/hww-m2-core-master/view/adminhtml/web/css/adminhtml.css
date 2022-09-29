@@ -1,0 +1,22 @@
+.admin__menu #menu-harriswebworks-core-all.level-0 > a:before {
+     content:url('../images/logo.png')
+}
+.admin__menu #menu-harriswebworks-core-all .submenu-title{
+    font-size: 2.0rem;
+}
+.admin__menu .submenu .item-hww-slider .parent .submenu-group-title {
+    display: block!important;
+}
+.harriswebworks .title:before {
+	content: '';
+	background-image: url('../images/hww-logo-lightbg-02.svg');
+	background-size: auto 20px;
+	background-repeat: no-repeat;
+	width:25px;
+	height:20px;
+	display:inline-block;
+	vertical-align: bottom;
+}
+
+
+

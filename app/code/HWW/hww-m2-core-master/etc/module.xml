@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Harriswebworks
+ * @package Harriswebworks\Core
+ * @author Enamul Haque <emirajbbd@gmail.com / devteam@Harriswebworks.com >
+ * @copyright Copyright (c) 2018 Harriswebworks, Ltd (http://www.Harriswebworks.com)
+ * @license http://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Harriswebworks_Core" setup_version="0.1.0"/>
+</config>
